@@ -9,22 +9,47 @@ require('dotenv').config();
 app.use(express.json());
 app.use(cors());
 
+
+const routerTaiKhoan = require('./router/taikhoan.router');
+
+app.use('/taikhoan/', routerTaiKhoan);
+
 app.get('/', (req, res) => {
     res.send("Hello World!");
 });
 
 const hostName = "192.168.1.15"
 const port = process.env.PORT || 8080;
-// const uri = process.env.ATLAS_URI;
+const uri = process.env.ATLAS_URI;
+
+console.log("MongoDB URI:", uri);  // Thêm dòng này để in URI và kiểm tra
+
 
 const server = app.listen(port, hostName, () => {
     console.log(`Example app listening on: http://${hostName}:${port}/`);
 })
 
-// mongoose.connect(uri, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// }).then(() => console.log('MongoDB Connected...')).catch(err => console.log(err));
+mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('MongoDB Connected...');
+
+    // Khởi tạo các model để tạo collection
+    require('./models/chuongtrinhkhung.model');
+    require('./models/congno.model');
+    require('./models/diemso.model');
+    require('./models/hocky.model');
+    require('./models/lichhoc.model');
+    require('./models/lophocphan.model');
+    require('./models/monhoc.model');
+    require('./models/taikhoan.model');
+    require('./models/quanly.model');
+    require('./models/giangvien.model');
+    require('./models/sinhvien.model');
+    require('./models/thongbaogv.model');
+    require('./models/thongbaosv.model');
+}).catch(err => console.log(err));
 
 // const io = socket(server, {
 //     cors: {
