@@ -28,7 +28,11 @@ const chuongTrinhKhungSchema = new Schema({
     required: true,
     maxlength: 10,
     ref: 'HocKy' // Tham chiếu đến bảng HocKy
-  }
+  },
+  monHoc: [{
+    type: String,
+    ref: 'MonHoc' // Tham chiếu đến bảng MonHoc
+  }]
 });
 
 // Tạo chỉ mục cho maHK để tối ưu hóa tìm kiếm
