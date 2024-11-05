@@ -11,7 +11,7 @@ const ThongBaoSVSchema = new Schema({
     maxlength: 10,
     required: true
   },
-  noiDungTB: {
+  noiDungThongBao: {
     type: String,
     maxlength: 45,
     default: null
@@ -21,7 +21,11 @@ const ThongBaoSVSchema = new Schema({
     maxlength: 8,
     required: true,
     ref: 'SinhVien' // Tạo liên kết với model SinhVien thông qua MSSV
-  }
+  },
+  taoThongBao: {
+    type: String,
+    maxlength: 45,
+  },
 });
 
 

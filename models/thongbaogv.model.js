@@ -15,11 +15,15 @@ const ThongBaoGVSchema = new Schema({
     type: String,
     maxlength: 45,
   },
-  doiTuongTB: {
+  doiTuongThongBao: {
     type: String,
     maxlength: 8,
     required: true,
-    ref: 'GiangVien' 
+    ref: 'GiangVien',
+  },
+  taoThongBao:{
+    type: String,
+    maxlength: 45,
   }
 });
 
