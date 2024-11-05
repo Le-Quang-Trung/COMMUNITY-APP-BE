@@ -6,9 +6,21 @@ mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 const Schema = mongoose.Schema;
 
 const SinhVienSchema = new Schema({
+  hinhAnh: {
+    type: String,
+  },
   hoTen: {
     type: String,
     maxlength: 45,
+  },
+  trangThai: {
+    type: String,  
+  },
+  gioiTinh: {
+    type: String,  
+  },
+  ngaySinh: {
+    type: Date,
   },
   mssv: {
     type: String,
@@ -16,6 +28,10 @@ const SinhVienSchema = new Schema({
     required: true
   },
   lop: {
+    type: String,
+    maxlength: 45,
+  },
+  bacDaoTao: {
     type: String,
     maxlength: 45,
   },
@@ -42,22 +58,6 @@ const SinhVienSchema = new Schema({
         message: props => `${props.value} không phải là một số điện thoại hợp lệ!`
     }
   },
-  hinhAnh: {
-    type: String,
-  },
-  ngaySinh: {
-    type: Date,
-  },
-  gioiTinh: {
-    type: Boolean,  // true for male, false for female, or you can adjust as needed
-  },
-  noiSinh: {
-    type: String,
-    maxlength: 45,
-  },
-  trangThai: {
-    type: Boolean,  // Assuming binary status, adjust type if more complex
-  }
 });
 
 

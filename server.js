@@ -12,6 +12,7 @@ app.use(cors());
 
 const routerTaiKhoan = require('./router/taikhoan.router');
 
+app.use('/sinhvien/', require('./router/sinhvien.router'));
 app.use('/taikhoan/', routerTaiKhoan);
 
 app.get('/', (req, res) => {
