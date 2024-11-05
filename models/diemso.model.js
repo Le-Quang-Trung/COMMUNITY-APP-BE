@@ -50,12 +50,13 @@ const diemSoSchema = new Schema({
     required: true,
     maxlength: 10,
     ref: 'MonHoc' // Tham chiếu đến bảng MonHoc
-  }
-});
+  },
+},{versionKey: false});
 
 // Tạo chỉ mục để tối ưu hóa tìm kiếm theo MSSV và MaMonHoc
 diemSoSchema.index({ MSSV: 1 });
 diemSoSchema.index({ MaMonHoc: 1 });
+diemSoSchema.index({ lopHoc: 1 });
 
 // Định nghĩa model DiemSo dựa trên schema
 const DiemSo = mongoose.model('DiemSo', diemSoSchema);
