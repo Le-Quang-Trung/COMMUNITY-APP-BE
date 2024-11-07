@@ -17,7 +17,7 @@ const lichHocSchema = new Schema({
     maxlength: 12,
     //ref: 'LopHocPhan' // Tham chiếu đến bảng LopHocPhan
   },
-  mon: {
+  maMonHoc: {
     type: String,
     maxlength: 45,
     default: null

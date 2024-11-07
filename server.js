@@ -15,12 +15,14 @@ const routerDiemSo = require('./router/diemso.router');
 const routerChuongTrinhKhung = require('./router/chuongtrinhkhung.router');
 const routerSinhVien = require('./router/sinhvien.router')
 const routerGiangVien = require('./router/giangvien.router')
+const monhoc = require('./router/monhoc.router');
 
 app.use('/sinhvien/', routerSinhVien);
 app.use('/giangvien/', routerGiangVien);
 app.use('/taikhoan/', routerTaiKhoan);
 app.use('/diemso', routerDiemSo);
 app.use('/chuongtrinhkhung', routerChuongTrinhKhung);
+app.use('/monhoc', monhoc);
 
 app.get('/', (req, res) => {
     res.send("Hello World!");
@@ -57,6 +59,7 @@ mongoose.connect(uri, {
     require('./models/sinhvien.model');
     require('./models/thongbaogv.model');
     require('./models/thongbaosv.model');
+    require('./models/sinhvienlophp.model');
 }).catch(err => console.log(err));
 
 // const io = socket(server, {
