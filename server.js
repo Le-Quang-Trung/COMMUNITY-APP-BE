@@ -13,8 +13,11 @@ app.use(cors());
 const routerTaiKhoan = require('./router/taikhoan.router');
 const routerDiemSo = require('./router/diemso.router');
 const routerChuongTrinhKhung = require('./router/chuongtrinhkhung.router');
+const routerSinhVien = require('./router/sinhvien.router')
+const routerGiangVien = require('./router/giangvien.router')
 
-app.use('/sinhvien/', require('./router/sinhvien.router'));
+app.use('/sinhvien/', routerSinhVien);
+app.use('/giangvien/', routerGiangVien);
 app.use('/taikhoan/', routerTaiKhoan);
 app.use('/diemso', routerDiemSo);
 app.use('/chuongtrinhkhung', routerChuongTrinhKhung);
@@ -23,7 +26,7 @@ app.get('/', (req, res) => {
     res.send("Hello World!");
 });
 
-const hostName = "192.168.137.16"
+const hostName = "192.168.1.15"
 const port = process.env.PORT || 8080;
 const uri = process.env.ATLAS_URI;
 

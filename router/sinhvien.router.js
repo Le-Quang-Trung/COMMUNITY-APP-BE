@@ -15,7 +15,7 @@ routerSinhVien.get('/:mssv', async (req, res) => {
         const sinhvien = await SinhVienModel.findOne({ mssv });
         
         if (!sinhvien) {
-            return res.status(404).json({ message: 'Không tìm thấy sinh viên' });
+            return res.status(404).json({ message: 'Not found student' });
         }
         res.json(sinhvien);
     } catch (error) {
