@@ -16,7 +16,7 @@ const lopHocPhanSchema = new Schema({
     maxlength: 45,
     default: null
   },
-  mon: {
+  maMonHoc: {
     type: String,
     maxlength: 45,
     default: null
