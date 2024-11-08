@@ -6,7 +6,7 @@ mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 const Schema = mongoose.Schema;
 
 const SinhVienLopHP = new Schema({
-    MSSV: {
+    mssv: {
         type: String,
         required: true,
         maxlength: 8,

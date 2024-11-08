@@ -14,12 +14,14 @@ const routerTaiKhoan = require('./router/taikhoan.router');
 const routerDiemSo = require('./router/diemso.router');
 const routerChuongTrinhKhung = require('./router/chuongtrinhkhung.router');
 const monhoc = require('./router/monhoc.router');
+const lichhoc = require('./router/lichhoc.router');
 
 app.use('/sinhvien/', require('./router/sinhvien.router'));
 app.use('/taikhoan/', routerTaiKhoan);
 app.use('/diemso', routerDiemSo);
 app.use('/chuongtrinhkhung', routerChuongTrinhKhung);
 app.use('/monhoc', monhoc);
+app.use('/lichhoc', lichhoc);
 
 app.get('/', (req, res) => {
     res.send("Hello World!");

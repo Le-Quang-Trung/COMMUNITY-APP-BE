@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 const uri = process.env.ATLAS_URI;
-mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const Schema = mongoose.Schema;
 
@@ -22,21 +22,35 @@ const lichHocSchema = new Schema({
     maxlength: 45,
     default: null
   },
-  ngayHoc: {
+  lichHoc: [{
+    ngayHoc: {
+      type: Number, // Sử dụng số để biểu diễn thứ trong tuần (1: Thứ Hai, 7: Chủ Nhật)
+      min: 1, // Thứ Hai
+      max: 7, // Chủ Nhật
+      required: true
+    },
+    tietHoc: {
+      type: String,
+      maxlength: 45,
+      default: null
+    },
+    phongHoc: {
+      type: String,
+      maxlength: 45,
+      default: null
+    }
+  }],
+  ngayBatDau: {
     type: Date,
+    required: true,
     default: null
   },
-  tietHoc: {
-    type: String,
-    maxlength: 45,
+  ngayKetThuc: {
+    type: Date,
+    required: true,
     default: null
   },
   GV: {
-    type: String,
-    maxlength: 45,
-    default: null
-  },
-  phongHoc: {
     type: String,
     maxlength: 45,
     default: null
