@@ -31,6 +31,31 @@ routerTaiKhoan.get('/id/:id', async (req, res) => {
     }
 });
 
+// API tạo tài khoản cho sinh viên (Quản lý)
+routerTaiKhoan.post('/taotaikhoan', async (req, res) => {
+    try {
+        const { tenTaiKhoan, matKhau } = req.body;
+        
+        // Kiểm tra nếu tài khoản đã tồn tại
+        const existingAccount = await TaiKhoanModel.findOne({ tenTaiKhoan: tenTaiKhoan });
+        if (existingAccount) {
+            return res.status(400).json({ message: "Tài khoản đã tồn tại." });
+        }
+
+        // Tạo tài khoản mới
+        const newTaiKhoan = await TaiKhoanModel.create({
+            tenTaiKhoan: tenTaiKhoan,
+            matKhau: matKhau,
+            quyen: 'SV' // Đặt quyền là 'SV' cho sinh viên
+        });
+
+        res.status(201).json(newTaiKhoan);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ message: "Không thể tạo tài khoản sinh viên." });
+    }
+});
+
 //Đăng nhập
 //SINHVIEN
 routerTaiKhoan.post('/loginsv', async (req,res,next) => {
@@ -54,6 +79,7 @@ routerTaiKhoan.post('/loginsv', async (req,res,next) => {
         res.status(500).json({message: err.message});
     }
 })
+
 //GIANGVIEN
 routerTaiKhoan.post('/logingv', async (req,res,next) => {
     try{
@@ -81,6 +107,7 @@ routerTaiKhoan.post('/logingv', async (req,res,next) => {
         res.status(500).json({message: err.message});
     }
 })
+
 //DANGXUAT
 routerTaiKhoan.post('/logout', async (req, res, next) => {
     try {

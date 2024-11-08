@@ -19,7 +19,7 @@ const TaiKhoanSchema = new Schema({
         maxlength: 8,
         unique: false,
     }
-});
+}, { versionKey: false });
 
 
 // Tạo model từ schema
