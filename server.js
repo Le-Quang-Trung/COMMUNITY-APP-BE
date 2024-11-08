@@ -16,6 +16,7 @@ const routerChuongTrinhKhung = require('./router/chuongtrinhkhung.router');
 const routerSinhVien = require('./router/sinhvien.router')
 const routerGiangVien = require('./router/giangvien.router')
 const monhoc = require('./router/monhoc.router');
+const lichhoc = require('./router/lichhoc.router');
 
 app.use('/sinhvien/', routerSinhVien);
 app.use('/giangvien/', routerGiangVien);
@@ -23,6 +24,7 @@ app.use('/taikhoan/', routerTaiKhoan);
 app.use('/diemso', routerDiemSo);
 app.use('/chuongtrinhkhung', routerChuongTrinhKhung);
 app.use('/monhoc', monhoc);
+app.use('/lichhoc', lichhoc);
 
 app.get('/', (req, res) => {
     res.send("Hello World!");

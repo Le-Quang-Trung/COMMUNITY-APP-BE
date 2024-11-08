@@ -92,7 +92,7 @@ routerMonHoc.get('/getMonHoc/:MSSV/:hocky', async (req, res, next) => {
     }
 });
 
-// API mới để lấy lớp học phần từ MSSV và hocKy
+// API để lấy lớp học phần từ MSSV và hocKy
 routerMonHoc.get('/getLopHocPhan/:MSSV/:hocky', async (req, res, next) => {
     try {
         const { MSSV, hocky } = req.params;
@@ -153,7 +153,6 @@ routerMonHoc.get('/getLopHocPhan/:MSSV/:hocky', async (req, res, next) => {
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
 });
-
 
 // API mới để lấy mã lớp học phần từ MSSV và maMonHoc
 routerMonHoc.get('/getMaLopHocPhan/:MSSV/:maMonHoc', async (req, res, next) => {
