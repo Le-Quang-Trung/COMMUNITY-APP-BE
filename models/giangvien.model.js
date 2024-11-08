@@ -7,7 +7,8 @@ const Schema = mongoose.Schema;
 
 const GiangVienSchema = new Schema({
   tenGV: {
-    type: Number,
+    type: String,
+    maxlength: 45,
     required: true
   },
   maGV: {
