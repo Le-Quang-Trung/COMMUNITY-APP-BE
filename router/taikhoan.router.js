@@ -35,7 +35,7 @@ routerTaiKhoan.get('/id/:id', async (req, res) => {
 routerTaiKhoan.post('/taotaikhoan', async (req, res) => {
     try {
         const { tenTaiKhoan, matKhau } = req.body;
-        
+
         // Kiểm tra nếu tài khoản đã tồn tại
         const existingAccount = await TaiKhoanModel.findOne({ tenTaiKhoan: tenTaiKhoan });
         if (existingAccount) {
@@ -58,12 +58,12 @@ routerTaiKhoan.post('/taotaikhoan', async (req, res) => {
 
 //Đăng nhập
 //SINHVIEN
-routerTaiKhoan.post('/loginsv', async (req,res,next) => {
-    try{
-        const {tenTaiKhoan, matKhau} = req.body;
-        const taikhoan = await TaiKhoanModel.findOne({tenTaiKhoan: tenTaiKhoan});
+routerTaiKhoan.post('/loginsv', async (req, res, next) => {
+    try {
+        const { tenTaiKhoan, matKhau } = req.body;
+        const taikhoan = await TaiKhoanModel.findOne({ tenTaiKhoan: tenTaiKhoan });
         if (!taikhoan) {
-            return res.status(405).json({"Can't find user with this tenTaiKhoan": tenTaiKhoan});
+            return res.status(405).json({ "Can't find user with this tenTaiKhoan": tenTaiKhoan });
         }
         if (taikhoan.matKhau !== matKhau) {
             return res.status(404).json({ "Password is incorrect": matKhau });
@@ -74,19 +74,19 @@ routerTaiKhoan.post('/loginsv', async (req,res,next) => {
         delete taikhoan.matKhau;
         res.status(200).json(taikhoan);
     }
-    catch (err){
+    catch (err) {
         console.error(err.message);
-        res.status(500).json({message: err.message});
+        res.status(500).json({ message: err.message });
     }
 })
 
 //GIANGVIEN
-routerTaiKhoan.post('/logingv', async (req,res,next) => {
-    try{
-        const {tenTaiKhoan, matKhau} = req.body;
-        const taikhoan = await TaiKhoanModel.findOne({tenTaiKhoan: tenTaiKhoan});
+routerTaiKhoan.post('/logingv', async (req, res, next) => {
+    try {
+        const { tenTaiKhoan, matKhau } = req.body;
+        const taikhoan = await TaiKhoanModel.findOne({ tenTaiKhoan: tenTaiKhoan });
         if (!taikhoan) {
-            return res.status(405).json({"Can't find user with this tenTaiKhoan": tenTaiKhoan});
+            return res.status(405).json({ "Can't find user with this tenTaiKhoan": tenTaiKhoan });
         }
         if (taikhoan.matKhau !== matKhau) {
             return res.status(404).json({ "Password is incorrect": matKhau });
@@ -96,15 +96,18 @@ routerTaiKhoan.post('/logingv', async (req,res,next) => {
         //     return res.status(404).json({"Password is incorrect": matKhau});
         // }
 
-        if (taikhoan.quyen !== 'GV') {
+        // Check if the role is either 'GV' or 'QL'
+        if (!['GV', 'QL'].includes(taikhoan.quyen)) {
             return res.status(403).json({ "Insufficient access permissions": true });
         }
+
+        
         delete taikhoan.matKhau;
         res.status(200).json(taikhoan);
     }
-    catch (err){
+    catch (err) {
         console.error(err.message);
-        res.status(500).json({message: err.message});
+        res.status(500).json({ message: err.message });
     }
 })
 
@@ -121,6 +124,35 @@ routerTaiKhoan.post('/logout', async (req, res, next) => {
         res.status(200).json({ message: 'logged out successfully' });
     } catch (err) {
         console.error(err.message);
+        res.status(500).json({ message: err.message });
+    }
+});
+
+//DOI MAT KHAU
+routerTaiKhoan.put('/changePassword/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        var lastpassword = req.body.lastpassword;
+        var newpassword = req.body.newpassword;
+
+        const taikhoan = await TaiKhoanModel.findById(id);
+        if (!taikhoan) {
+            return res.status(404).json({ "can't find account with this id": id });
+        }
+
+        // Check if the provided last password matches (without bcrypt)
+        if (taikhoan.matKhau !== lastpassword) {
+            return res.status(404).json({ "password is incorrect": lastpassword });
+        }
+
+        // Update password without bcrypt
+        const updateTaiKhoan = await TaiKhoanModel.findByIdAndUpdate(id, {
+            matKhau: newpassword
+        }, { new: true });
+
+        res.status(200).json(updateTaiKhoan);
+    } catch (err) {
+        console.log(err.message);
         res.status(500).json({ message: err.message });
     }
 });
