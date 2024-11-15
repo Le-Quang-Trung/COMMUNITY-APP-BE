@@ -21,6 +21,12 @@ const GiangVienSchema = new Schema({
     type: String,
     maxlength: 45,
   },
+  nganh: [
+    {
+      type: String,
+      maxlength: 45,
+    }
+  ],
   diaChi: {
     type: String,
     maxlength: 45,
