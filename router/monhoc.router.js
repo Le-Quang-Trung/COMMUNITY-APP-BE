@@ -198,4 +198,25 @@ routerMonHoc.get('/getMaLopHocPhan/:MSSV/:maMonHoc', async (req, res, next) => {
 });
 
 
+// tìm môn học theo mã môn học
+routerMonHoc.get('/getMonHoc/:maMonHoc', async (req, res, next) => {
+    try {
+        const { maMonHoc } = req.params;
+        console.log('Params:', maMonHoc);  // Kiểm tra giá trị tham số
+
+        // Tìm môn học dựa trên maMonHoc trong collection MonHoc
+        const monHoc = await MonHocModel.findOne({ maMonHoc });
+        if (!monHoc) {
+            console.log('MonHoc not found for maMonHoc:', maMonHoc);
+            return res.status(404).json({ message: 'MonHoc not found' });
+        }
+
+        console.log('Found MonHoc:', monHoc);
+        res.json(monHoc);
+    } catch (error) {
+        console.error('Error fetching MonHoc:', error);
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+});
+
 module.exports = routerMonHoc;

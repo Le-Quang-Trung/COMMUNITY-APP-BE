@@ -8,6 +8,16 @@ const nodemailer = require('nodemailer');
 routerSinhVien.use(bodyParser.urlencoded({ extended: false }));
 routerSinhVien.use(bodyParser.json());
 
+routerSinhVien.get('/', (req, res, next) => {
+    SinhVienModel.find({})
+        .then((sinhviens) => {
+            res.json(sinhviens);
+        })
+        .catch((err) => {
+            res.status(500).json('get sinhvien fail');
+        })
+})
+
 // GET /sinhvien/:mssv
 routerSinhVien.get('/:mssv', async (req, res) => {
     try {
@@ -30,7 +40,7 @@ routerSinhVien.post('/', async (req, res) => {
         const hoTen = req.body.hoTen;
         const trangThai = req.body.trangThai;
         const gioiTinh = req.body.gioiTinh;
-        const ngaySinh = req.body.ngaySinh;
+        let ngaySinh = req.body.ngaySinh;
         const mssv = req.body.mssv;
         const lop = req.body.lop;
         const bacDaoTao = req.body.bacDaoTao;
@@ -39,9 +49,16 @@ routerSinhVien.post('/', async (req, res) => {
         const diaChi = req.body.diaChi;
         const soDT = req.body.soDT;
 
-        if (!ngaySinh.includes('T')) {
-            ngaySinh += 'T17:00:00.000Z';
+        // Xử lý ngày sinh
+        if (ngaySinh) {
+            const [day, month, year] = ngaySinh.split('-');
+            if (day && month && year && !isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                ngaySinh = new Date(`${year}-${month}-${day}T17:00:00.000Z`).toISOString();
+            } else {
+                return res.status(400).json({ message: 'Ngày sinh không hợp lệ. Vui lòng nhập theo định dạng dd-MM-yyyy' });
+            }
         }
+
 
         const existingSinhVien = await SinhVienModel.findOne({ mssv: mssv });
         if (existingSinhVien) {
@@ -110,9 +127,16 @@ routerSinhVien.get('/getSinhVien/:mssv/:hoTen/:ngaySinh/:soDienThoai', async (re
         const { mssv, hoTen, ngaySinh, soDienThoai } = req.params;
         console.log('Params:', mssv, hoTen, ngaySinh, soDienThoai);  // Kiểm tra giá trị tham số
 
-        // Chuyển đổi ngày sinh sang định dạng Date
-        const ngaySinhDate = new Date(ngaySinh);
-        console.log('Converted ngaySinh:', ngaySinhDate);
+         // Chuyển đổi ngày sinh từ định dạng dd-MM-yyyy sang Date
+         let ngaySinhDate = null;
+         if (ngaySinh) {
+             const [day, month, year] = ngaySinh.split('-');
+             if (day && month && year && !isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                 ngaySinhDate = new Date(`${year}-${month}-${day}`);
+             } else {
+                 return res.status(400).json({ message: 'Ngày sinh không hợp lệ. Vui lòng nhập theo định dạng dd-MM-yyyy' });
+             }
+         }
 
         // Tạo đối tượng truy vấn
         const query = { mssv, hoTen, ngaySinh: ngaySinhDate, soDT: soDienThoai };
