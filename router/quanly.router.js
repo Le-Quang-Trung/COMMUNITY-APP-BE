@@ -115,7 +115,6 @@ routerQuanLy.post('/addSinhVienToLopHocPhan', async (req, res) => {
     }
 });
 
-// API tạo lịch học
 routerQuanLy.post('/createLichHoc', async (req, res) => {
     try {
         const { maLHP, maMonHoc, lichHoc, ngayBatDau, ngayKetThuc, GV, phanLoai } = req.body;
@@ -159,6 +158,18 @@ routerQuanLy.post('/createLichHoc', async (req, res) => {
         });
         const doc = await lichHocMoi.save();
         console.log('Created LichHoc:', doc);
+
+        // Tìm lớp học phần dựa trên mã lớp học phần
+        const lopHocPhan = await LopHocPhanModel.findOne({ maLHP });
+        if (!lopHocPhan) {
+            console.log('LopHocPhan not found:', maLHP);
+            return res.status(404).json({ message: 'LopHocPhan not found' });
+        }
+
+        // Thêm mã lịch học mới vào trường lịch học của lớp học phần
+        lopHocPhan.lichHoc.push(newMaLichHoc);
+        await lopHocPhan.save();
+        console.log('Updated LopHocPhan:', lopHocPhan);
 
         res.json(doc);
     } catch (error) {
