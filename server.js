@@ -18,6 +18,7 @@ const lichhoc = require('./router/lichhoc.router');
 const thongbaosv = require('./router/thongbao.router');
 const thongtinlophoc = require('./router/thongtinlophoc.router');
 const giangvien = require('./router/giangvien.router');
+const quanly = require('./router/quanly.router');
 
 app.use('/sinhvien/', require('./router/sinhvien.router'));
 app.use('/taikhoan/', routerTaiKhoan);
@@ -28,12 +29,13 @@ app.use('/lichhoc', lichhoc);
 app.use('/thongbaosv', thongbaosv);
 app.use('/thongtinlophoc', thongtinlophoc);
 app.use('/giangvien', giangvien);
+app.use('/quanly', quanly);
 
 app.get('/', (req, res) => {
     res.send("Hello World!");
 });
 
-const hostName = "192.168.137.5"
+const hostName = "192.168.1.6"
 const port = process.env.PORT || 8080;
 const uri = process.env.ATLAS_URI;
 
