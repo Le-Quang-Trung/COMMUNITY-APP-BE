@@ -2,6 +2,7 @@ const express = require('express');
 const routerThongBao = express.Router();
 const ThongBaoSV = require('../models/thongbaosv.model'); // Đảm bảo đường dẫn đúng
 const GiangVien = require('../models/giangvien.model'); // Đảm bảo đường dẫn đúng
+const ThongBaoGV = require('../models/thongbaogv.model'); // Đảm bảo đường dẫn đúng
 
 // API để lấy thông báo dựa trên MSSV
 routerThongBao.get('/getThongBaoSV/:MSSV', async (req, res, next) => {
@@ -31,6 +32,27 @@ routerThongBao.get('/getThongBaoSV/:MSSV', async (req, res, next) => {
         console.log('ThongBao with tenNguoiThongBao:', thongBaoWithTenNguoiThongBao);
 
         res.json(thongBaoWithTenNguoiThongBao);
+    } catch (error) {
+        console.error('Error fetching ThongBao:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// API để lấy thông báo dựa trên maGV
+routerThongBao.get('/getThongBaoGV/:maGV', async (req, res) => {
+    try {
+        const { maGV } = req.params;
+        console.log('Params:', maGV);  // Kiểm tra giá trị tham số
+
+        // Tìm thông báo dựa trên doiTuongThongBao trong collection ThongBaoGV
+        const thongBaoList = await ThongBaoGV.find({ doiTuongThongBao: maGV });
+        if (!thongBaoList || thongBaoList.length === 0) {
+            console.log('ThongBao not found for maGV:', maGV);
+            return res.status(404).json({ message: 'ThongBao not found' });
+        }
+
+        console.log('Found ThongBao:', thongBaoList);
+        res.json(thongBaoList);
     } catch (error) {
         console.error('Error fetching ThongBao:', error);
         res.status(500).json({ message: 'Internal server error' });
