@@ -46,11 +46,11 @@ routerQuanLy.post('/createLopHocPhan', async (req, res) => {
         // Tạo tên lớp học phần theo cú pháp DHKTPM16ATT
         const tenLHPGenerated = `DH${maNganh}${tenLop}`;
 
-        // Kiểm tra xem tên lớp học phần có bị trùng không
-        const existingLopHocPhan = await LopHocPhanModel.findOne({ tenLHP: tenLHPGenerated });
+        // Kiểm tra xem tên lớp học phần và mã môn học có bị trùng không
+        const existingLopHocPhan = await LopHocPhanModel.findOne({ tenLHP: tenLHPGenerated, maMonHoc });
         if (existingLopHocPhan) {
-            console.log('Tên lớp học phần bị trùng:', tenLHPGenerated);
-            return res.status(400).json({ message: 'Tên lớp học phần bị trùng' });
+            console.log('Tên lớp học phần và mã môn học bị trùng:', tenLHPGenerated, maMonHoc);
+            return res.status(400).json({ message: 'Tên lớp học phần và mã môn học bị trùng' });
         }
 
         // Tìm mã lớp học phần cuối cùng trong cơ sở dữ liệu
@@ -66,7 +66,7 @@ routerQuanLy.post('/createLopHocPhan', async (req, res) => {
         const maHKGenerated = `HK${HK}${Nam}${maNganh}`;
 
         // Tạo lớp học phần mới với sinhVien và lichHoc để trống
-        const lopHocPhan = new LopHocPhanModel({ maLHP: newMaLHP, tenLHP: tenLHPGenerated, maMonHoc, nganh: maNganh, maHK: maHKGenerated, GV, sinhVien: [], lichHoc: [] });
+        const lopHocPhan = new LopHocPhanModel({ maLHP: newMaLHP, tenLHP: tenLHPGenerated, maMonHoc, nganh: nganh, maHK: maHKGenerated, GV, sinhVien: [], lichHoc: [] });
         const doc = await lopHocPhan.save();
         console.log('Created LopHocPhan:', doc);
 

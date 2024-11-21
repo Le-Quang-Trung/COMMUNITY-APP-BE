@@ -56,28 +56,6 @@ routerGiangVien.get('/getLopHocPhan/:maGV/:nganh/:hocKy', async (req, res) => {
     }
 });
 
-// API lấy thông tin giảng viên dựa trên mã giảng viên
-routerGiangVien.get('/getThongTinGiangVien/:maGV', async (req, res) => {
-    try {
-        const { maGV } = req.params;
-        console.log('Params:', maGV);  // Kiểm tra giá trị tham số
-
-        // Tìm giảng viên dựa trên mã giảng viên trong collection GiangVien
-        const giangVien = await GiangVienModel.findOne({ maGV });
-        if (!giangVien) {
-            console.log('GiangVien not found:', maGV);
-            return res.status(404).json({ message: 'GiangVien not found' });
-        }
-
-        console.log('Found GiangVien:', giangVien);
-        res.json(giangVien);
-    } catch (error) {
-        console.error('Error fetching GiangVien:', error);
-        res.status(500).json({ message: 'Lỗi server', error: error.message });
-    }
-});
-
-
 // API đánh giá học tập sinh viên
 routerGiangVien.post('/danhGiaHocTap', async (req, res) => {
     try {
