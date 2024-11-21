@@ -4,6 +4,7 @@ const SinhVienModel = require('../models/sinhvien.model');
 const routerSinhVien = express.Router();
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
+const ThongBaoGV = require('../models/thongbaogv.model');
 
 routerSinhVien.use(bodyParser.urlencoded({ extended: false }));
 routerSinhVien.use(bodyParser.json());
@@ -153,6 +154,36 @@ routerSinhVien.get('/getSinhVien/:mssv/:hoTen/:ngaySinh/:soDienThoai', async (re
         res.json(sinhvien);
     } catch (error) {
         console.error('Error fetching SinhVien:', error);
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+});
+
+// API xin nghỉ phép dành cho sinh viên
+routerSinhVien.post('/xinNghiPhep', async (req, res) => {
+    try {
+        const { noiDungThongBao, doiTuongThongBao, taoThongBao, lyDo } = req.body;
+        console.log('Body:', { noiDungThongBao, doiTuongThongBao, taoThongBao, lyDo });  // Kiểm tra giá trị tham số
+
+        // Kiểm tra các trường bắt buộc
+        if (!noiDungThongBao || !doiTuongThongBao || !taoThongBao || !lyDo) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        // Tạo thông báo xin nghỉ phép mới với tiêu đề mặc định là "Xin nghỉ"
+        const thongBao = new ThongBaoGV({
+            tieuDeThongBao: "Xin nghỉ",
+            noiDungThongBao,
+            doiTuongThongBao,
+            taoThongBao,
+            ngayGioThongBao: new Date(), // Ngày giờ hiện tại
+            lyDo
+        });
+        const doc = await thongBao.save();
+        console.log('Created ThongBaoGV:', doc);
+
+        res.json(doc);
+    } catch (error) {
+        console.error('Error creating ThongBaoGV:', error);
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
 });

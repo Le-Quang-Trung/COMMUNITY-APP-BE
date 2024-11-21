@@ -6,10 +6,10 @@ mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
 const Schema = mongoose.Schema;
 
 const ThongBaoGVSchema = new Schema({
-  maThongBao: {
+  tieuDeThongBao: {
     type: String,
-    maxlength: 10,
-    required: true
+    maxlength: 255,
+    required: true,
   },
   noiDungThongBao: {
     type: String,
@@ -24,7 +24,14 @@ const ThongBaoGVSchema = new Schema({
   taoThongBao:{
     type: String,
     maxlength: 45,
-  }
+  },
+  ngayGioThongBao: {
+    type: Date,
+  },
+  lyDo: {
+    type: String,
+    maxlength: 255,
+  },
 });
 
 

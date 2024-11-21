@@ -17,10 +17,10 @@ const routerSinhVien = require('./router/sinhvien.router')
 const routerGiangVien = require('./router/giangvien.router')
 const monhoc = require('./router/monhoc.router');
 const lichhoc = require('./router/lichhoc.router');
-const thongbaosv = require('./router/thongbao.router');
+const thongbao = require('./router/thongbao.router');
 const thongtinlophoc = require('./router/thongtinlophoc.router');
 const giangvien = require('./router/giangvien.router');
-const quanly = require('./router/quanly.router')
+const quanly = require('./router/quanly.router');
 
 app.use('/sinhvien/', routerSinhVien);
 app.use('/giangvien/', routerGiangVien);
@@ -29,11 +29,10 @@ app.use('/diemso', routerDiemSo);
 app.use('/chuongtrinhkhung', routerChuongTrinhKhung);
 app.use('/monhoc', monhoc);
 app.use('/lichhoc', lichhoc);
-app.use('/thongbaosv', thongbaosv);
+app.use('/thongbao', thongbao);
 app.use('/thongtinlophoc', thongtinlophoc);
 app.use('/giangvien', giangvien);
 app.use('/quanly', quanly);
-
 
 app.get('/', (req, res) => {
     res.send("Hello World!");
