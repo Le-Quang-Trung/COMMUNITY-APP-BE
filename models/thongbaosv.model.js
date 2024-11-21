@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const ThongBaoSVSchema = new mongoose.Schema({
-  tieuDe: {
+  tieuDeThongBao: {
     type: String,
     maxlength: 255,
     required: true
   },
-  noiDung: {
+  noiDungThongBao: {
     type: String,
     required: true
   },

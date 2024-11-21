@@ -81,18 +81,18 @@ routerGiangVien.get('/getThongTinGiangVien/:maGV', async (req, res) => {
 // API đánh giá học tập sinh viên
 routerGiangVien.post('/danhGiaHocTap', async (req, res) => {
     try {
-        const { tieuDe, noiDung, doiTuongThongBao, taoThongBao } = req.body;
-        console.log('Body:', { tieuDe, noiDung, doiTuongThongBao, taoThongBao });  // Kiểm tra giá trị tham số
+        const { tieuDeThongBao, noiDungThongBao, doiTuongThongBao, taoThongBao } = req.body;
+        console.log('Body:', { tieuDeThongBao, noiDungThongBao, doiTuongThongBao, taoThongBao });  // Kiểm tra giá trị tham số
 
         // Kiểm tra các trường bắt buộc
-        if (!tieuDe || !noiDung || !doiTuongThongBao || !taoThongBao) {
+        if (!tieuDeThongBao || !noiDungThongBao || !doiTuongThongBao || !taoThongBao) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
         // Tạo thông báo mới
         const thongBao = new ThongBaoSV({
-            tieuDe,
-            noiDung,
+            tieuDeThongBao,
+            noiDungThongBao,
             doiTuongThongBao,
             taoThongBao,
             ngayGioThongBao: new Date() // Ngày giờ hiện tại
