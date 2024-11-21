@@ -13,7 +13,7 @@ const ThongBaoGVSchema = new Schema({
   },
   noiDungThongBao: {
     type: String,
-    maxlength: 45,
+    required: true,
   },
   doiTuongThongBao: {
     type: String,
