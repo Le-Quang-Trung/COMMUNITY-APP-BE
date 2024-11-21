@@ -127,16 +127,16 @@ routerSinhVien.get('/getSinhVien/:mssv/:hoTen/:ngaySinh/:soDienThoai', async (re
         const { mssv, hoTen, ngaySinh, soDienThoai } = req.params;
         console.log('Params:', mssv, hoTen, ngaySinh, soDienThoai);  // Kiểm tra giá trị tham số
 
-         // Chuyển đổi ngày sinh từ định dạng dd-MM-yyyy sang Date
-         let ngaySinhDate = null;
-         if (ngaySinh) {
-             const [day, month, year] = ngaySinh.split('-');
-             if (day && month && year && !isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                 ngaySinhDate = new Date(`${year}-${month}-${day}`);
-             } else {
-                 return res.status(400).json({ message: 'Ngày sinh không hợp lệ. Vui lòng nhập theo định dạng dd-MM-yyyy' });
-             }
-         }
+        // Chuyển đổi ngày sinh từ định dạng dd-MM-yyyy sang Date
+        let ngaySinhDate = null;
+        if (ngaySinh) {
+            const [day, month, year] = ngaySinh.split('-');
+            if (day && month && year && !isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                ngaySinhDate = new Date(`${year}-${month}-${day}`);
+            } else {
+                return res.status(400).json({ message: 'Ngày sinh không hợp lệ. Vui lòng nhập theo định dạng dd-MM-yyyy' });
+            }
+        }
 
         // Tạo đối tượng truy vấn
         const query = { mssv, hoTen, ngaySinh: ngaySinhDate, soDT: soDienThoai };
