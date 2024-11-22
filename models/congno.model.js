@@ -11,17 +11,30 @@ const congNoSchema = new Schema({
     required: true,
     maxlength: 10
   },
+  mssv: {
+    type: String,
+    required: true,
+    maxlength: 10,
+    ref: 'SinhVien' // Tham chiếu đến bảng SinhVien
+  },
+  maMonHoc: {
+    type: String,
+    required: true,
+    maxlength: 10,
+    ref: 'MonHoc' // Tham chiếu đến bảng MonHoc
+  },
+
   tinChi: {
     type: Number,
     default: null
   },
   soTien: {
     type: Number,
-    default: null
+    default: null // số tiền mỗi tín chỉ
   },
-  khauTru: {
-    type: Number,
-    default: null
+  trangThai: {
+    type: String,
+    default: 'Chưa đóng'
   },
   maHK: {
     type: String,
