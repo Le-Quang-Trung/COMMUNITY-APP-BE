@@ -38,6 +38,11 @@ const lichHocSchema = new Schema({
       type: String,
       maxlength: 45,
       default: null
+    },
+    phanLoai: {
+      type: String,
+      maxlength: 45,
+      default: null
     }
   }],
   ngayBatDau: {
@@ -55,11 +60,6 @@ const lichHocSchema = new Schema({
     maxlength: 45,
     default: null
   },
-  phanLoai: {
-    type: String,
-    maxlength: 45,
-    default: null
-  }
 });
 
 // Tạo chỉ mục cho maLHP để tối ưu hóa tìm kiếm

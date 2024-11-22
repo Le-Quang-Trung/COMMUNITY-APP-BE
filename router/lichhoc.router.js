@@ -53,4 +53,36 @@ routerLichHoc.get('/getLichHoc/:MSSV', async (req, res, next) => {
     }
 });
 
+// API để lấy danh sách lịch học dựa trên mã giảng viên
+routerLichHoc.get('/getLichDayHoc/:maGV', async (req, res) => {
+    try {
+        const { maGV } = req.params;
+        console.log('Params:', maGV);  // Kiểm tra giá trị tham số
+
+        // Tìm danh sách mã lớp học phần dựa trên mã giảng viên
+        const lopHocPhans = await LopHocPhanModel.find({ GV: maGV });
+        if (!lopHocPhans || lopHocPhans.length === 0) {
+            console.log('LopHocPhan not found for maGV:', maGV);
+            return res.status(404).json({ message: 'LopHocPhan not found' });
+        }
+
+        const maLHPs = lopHocPhans.map(item => item.maLHP);
+        console.log('maLHPs:', maLHPs);  // Log giá trị maLHPs
+
+        // Tìm danh sách lịch học dựa trên danh sách mã lớp học phần
+        const lichHocs = await LichHocModel.find({ maLHP: { $in: maLHPs } });
+        if (!lichHocs || lichHocs.length === 0) {
+            console.log('LichHoc not found for maLHPs:', maLHPs);
+            return res.status(404).json({ message: 'LichHoc not found' });
+        }
+
+        console.log('Found LichHocs:', lichHocs);
+        res.json(lichHocs);
+    } catch (error) {
+        console.error('Error fetching LichHocs:', error);
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+});
+
+
 module.exports = routerLichHoc;
