@@ -39,7 +39,7 @@ const congNoSchema = new Schema({
   maHK: {
     type: String,
     required: true,
-    maxlength: 10,
+    maxlength: 11,
     ref: 'HocKy' // Tham chiếu đến bảng HocKy
   }
 });

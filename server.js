@@ -73,6 +73,7 @@ mongoose.connect(uri, {
     require('./models/thongbaosv.model');
     require('./models/sinhvienlophp.model');
     require('./models/khautru.model');
+    require('./models/phieuthu.model');
 }).catch(err => console.log(err));
 
 // const io = socket(server, {
