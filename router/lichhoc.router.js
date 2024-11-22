@@ -4,6 +4,7 @@ const LichHocModel = require('../models/lichhoc.model');
 const LopHocPhanModel = require('../models/lophocphan.model');
 const MonHocModel = require('../models/monhoc.model');
 const SinhVienLopHPModel = require('../models/sinhvienlophp.model');
+const GiangVienModel = require('../models/giangvien.model');
 
 // API để lấy lịch học dựa trên MSSV
 routerLichHoc.get('/getLichHoc/:MSSV', async (req, res, next) => {
@@ -35,14 +36,20 @@ routerLichHoc.get('/getLichHoc/:MSSV', async (req, res, next) => {
         const maMonHocs = lopHocPhans.map(item => item.maMonHoc);
         const monHocs = await MonHocModel.find({ maMonHoc: { $in: maMonHocs } });
 
+        // Tìm tên giảng viên
+        const maGVs = lopHocPhans.map(item => item.GV);
+        const giangViens = await GiangVienModel.find({ maGV: { $in: maGVs } });
+
         // Kết hợp kết quả
         const result = lichHoc.map(lich => {
             const lopHocPhan = lopHocPhans.find(lhp => lhp.maLHP === lich.maLHP);
             const monHoc = monHocs.find(mh => mh.maMonHoc === lopHocPhan.maMonHoc);
+            const giangVien = giangViens.find(gv => gv.maGV === lopHocPhan.GV);
             return {
                 ...lich._doc,
                 tenLopHocPhan: lopHocPhan.tenLopHocPhan,
-                tenMonHoc: monHoc.tenMonHoc
+                tenMonHoc: monHoc.tenMonHoc,
+                tenGV: giangVien ? giangVien.tenGV : 'Unknown'
             };
         });
 
@@ -76,8 +83,29 @@ routerLichHoc.get('/getLichDayHoc/:maGV', async (req, res) => {
             return res.status(404).json({ message: 'LichHoc not found' });
         }
 
-        console.log('Found LichHocs:', lichHocs);
-        res.json(lichHocs);
+        // Tìm tên lớp học phần và tên môn học
+        const maMonHocs = lopHocPhans.map(item => item.maMonHoc);
+        const monHocs = await MonHocModel.find({ maMonHoc: { $in: maMonHocs } });
+
+        // Tìm tên giảng viên
+        const maGVs = lopHocPhans.map(item => item.GV);
+        const giangViens = await GiangVienModel.find({ maGV: { $in: maGVs } });
+
+        // Kết hợp kết quả
+        const result = lichHocs.map(lich => {
+            const lopHocPhan = lopHocPhans.find(lhp => lhp.maLHP === lich.maLHP);
+            const monHoc = monHocs.find(mh => mh.maMonHoc === lopHocPhan.maMonHoc);
+            const giangVien = giangViens.find(gv => gv.maGV === lopHocPhan.GV);
+            return {
+                ...lich._doc,
+                tenLopHocPhan: lopHocPhan.tenLopHocPhan,
+                tenMonHoc: monHoc.tenMonHoc,
+                tenGV: giangVien ? giangVien.tenGV : 'Unknown'
+            };
+        });
+
+        console.log('Found LichHocs:', result);
+        res.json(result);
     } catch (error) {
         console.error('Error fetching LichHocs:', error);
         res.status(500).json({ message: 'Lỗi server', error: error.message });

@@ -71,22 +71,19 @@ routerDiemSo.post('/taoDiem', async (req, res, next) => {
 // Cập nhật điểm số, các trường không cập nhật thì giữ nguyên
 routerDiemSo.post('/capNhatDiem', async (req, res, next) => {
     try {
-        const { maDiem, lopHoc, monHoc, diemTK1, diemTK2, diemTK3, diemGK, diemCK, MSSV, maMonHoc } = req.body;
+        const { lopHoc, monHoc, diemTK1, diemTK2, diemTK3, diemGK, diemCK, MSSV, maMonHoc } = req.body;
 
-        const diemso = await DiemSoModel.findOne({ maDiem: maDiem });
+        // Tìm điểm số dựa trên các trường lopHoc, monHoc, MSSV và maMonHoc
+        const diemso = await DiemSoModel.findOne({ lopHoc, monHoc, MSSV, maMonHoc });
         if (!diemso) {
             return res.status(404).json({ message: 'DiemSo not found' });
         }
 
-        diemso.lopHoc = lopHoc !== undefined ? lopHoc : diemso.lopHoc;
-        diemso.monHoc = monHoc !== undefined ? monHoc : diemso.monHoc;
         diemso.diemTK1 = diemTK1 !== undefined ? diemTK1 : diemso.diemTK1;
         diemso.diemTK2 = diemTK2 !== undefined ? diemTK2 : diemso.diemTK2;
         diemso.diemTK3 = diemTK3 !== undefined ? diemTK3 : diemso.diemTK3;
         diemso.diemGK = diemGK !== undefined ? diemGK : diemso.diemGK;
         diemso.diemCK = diemCK !== undefined ? diemCK : diemso.diemCK;
-        diemso.MSSV = MSSV !== undefined ? MSSV : diemso.MSSV;
-        diemso.maMonHoc = maMonHoc !== undefined ? maMonHoc : diemso.maMonHoc;
 
         await diemso.save();
         res.status(200).json(diemso);
