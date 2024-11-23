@@ -16,11 +16,11 @@ routerDiemSo.get('/', (req, res, next) => {
         })
 })
 
-// Lấy điểm số theo MSSV, MaMonHoc, MaLopHoc
-routerDiemSo.get('/getDiem/:MSSV/:MaMonHoc/:MaLopHoc', (req, res, next) => {
-    const { MSSV, MaMonHoc, MaLopHoc } = req.params;
-    console.log('Params:', MSSV, MaMonHoc, MaLopHoc);  // Kiểm tra giá trị tham số
-    DiemSoModel.findOne({ MSSV: MSSV, maMonHoc: MaMonHoc, lopHoc: MaLopHoc })
+// Lấy điểm số theo MSSV, MaMonHoc, LopHoc
+routerDiemSo.get('/getDiem/:MSSV/:MaMonHoc/:LopHoc', (req, res, next) => {
+    const { MSSV, MaMonHoc, LopHoc } = req.params;
+    console.log('Params:', MSSV, MaMonHoc, LopHoc);  // Kiểm tra giá trị tham số
+    DiemSoModel.findOne({ MSSV: MSSV, maMonHoc: MaMonHoc, lopHoc: LopHoc })
         .then((diemso) => {
             if (!diemso) {
                 return res.status(404).json({ message: 'DiemSo not found' });

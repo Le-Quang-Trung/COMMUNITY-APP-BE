@@ -21,6 +21,7 @@ const thongbao = require('./router/thongbao.router');
 const thongtinlophoc = require('./router/thongtinlophoc.router');
 const giangvien = require('./router/giangvien.router');
 const quanly = require('./router/quanly.router');
+const congno = require('./router/congno.router');
 
 app.use('/sinhvien/', routerSinhVien);
 app.use('/giangvien/', routerGiangVien);
@@ -33,6 +34,7 @@ app.use('/thongbao', thongbao);
 app.use('/thongtinlophoc', thongtinlophoc);
 app.use('/giangvien', giangvien);
 app.use('/quanly', quanly);
+app.use('/congno', congno);
 
 app.get('/', (req, res) => {
     res.send("Hello World!");
@@ -70,6 +72,8 @@ mongoose.connect(uri, {
     require('./models/thongbaogv.model');
     require('./models/thongbaosv.model');
     require('./models/sinhvienlophp.model');
+    require('./models/khautru.model');
+    require('./models/phieuthu.model');
 }).catch(err => console.log(err));
 
 // const io = socket(server, {

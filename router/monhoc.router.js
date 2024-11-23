@@ -263,4 +263,46 @@ routerMonHoc.get('/getMonHoc/:maMonHoc', async (req, res, next) => {
     }
 });
 
+// API mới để lấy tên lớp học phần từ MSSV và maMonHoc
+routerMonHoc.get('/getTenLopHocPhan/:MSSV/:maMonHoc', async (req, res, next) => {
+    try {
+        const { MSSV, maMonHoc } = req.params;
+        console.log('Params:', MSSV, maMonHoc);  // Kiểm tra giá trị tham số
+
+        // Từ MSSV tìm ra danh sách maLHP ở bảng sinhvienlophp
+        let maLHPs = [];
+        try {
+            console.log('Searching SinhVienLopHP for MSSV:', MSSV);  // Log giá trị MSSV
+            const sinhVienLopHP = await SinhVienLopHPModel.find({ mssv: MSSV });
+            if (!sinhVienLopHP || sinhVienLopHP.length === 0) {
+                console.log('SinhVienLopHP not found for MSSV:', MSSV);
+                return res.status(404).json({ message: 'SinhVienLopHP not found' });
+            }
+            console.log('Found SinhVienLopHP:', sinhVienLopHP);  // Log chi tiết kết quả truy vấn
+
+            maLHPs = sinhVienLopHP.map(item => item.maLHP);
+            console.log('maLHPs:', maLHPs);  // Log giá trị maLHPs
+        } catch (error) {
+            console.error('Error fetching SinhVienLopHP:', error);
+            return res.status(500).json({ message: 'Lỗi server', error: error.message });
+        }
+
+        // Từ maLHP và maMonHoc tìm ra danh sách lớp học phần ở bảng lophocphan
+        const lopHocPhans = await LopHocPhanModel.find({ maLHP: { $in: maLHPs }, maMonHoc: maMonHoc });
+        if (!lopHocPhans || lopHocPhans.length === 0) {
+            console.log('LopHocPhan not found for:', { maLHPs, maMonHoc });
+            return res.status(404).json({ message: 'LopHocPhan not found' });
+        }
+        console.log('Found LopHocPhans:', lopHocPhans);  // Log chi tiết kết quả truy vấn
+
+        // Lấy tên lớp học phần
+        const tenLopHocPhans = lopHocPhans.map(item => item.tenLHP);
+        console.log('tenLopHocPhans:', tenLopHocPhans);  // Log giá trị tenLopHocPhans
+
+        res.json(tenLopHocPhans);
+    } catch (error) {
+        console.error('Error fetching LopHocPhans:', error);
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+});
 module.exports = routerMonHoc;
