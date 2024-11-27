@@ -6,6 +6,7 @@ const LopHocPhanModel = require('../models/lophocphan.model');
 const SinhVienModel = require('../models/sinhvien.model');
 const SinhVienLopHPModel = require('../models/sinhvienlophp.model'); 
 const LichHocModel = require('../models/lichhoc.model');
+const DiemSoModel = require('../models/diemso.model');
 
 routerQuanLy.use(bodyParser.urlencoded({ extended: false }));
 routerQuanLy.use(bodyParser.json());
@@ -77,7 +78,7 @@ routerQuanLy.post('/createLopHocPhan', async (req, res) => {
     }
 });
 
-// thêm sinh viên vào lớp học phần (input là mã lớp học phần và danh sách mã sinh viên, sinh viên được thêm vào danh sách sinh viên của lớp học phần, tạo document cho sinhvienlophp với mã sinh viên và mã lớp học phần)
+// API để thêm sinh viên vào lớp học phần và tạo bảng điểm trống
 routerQuanLy.post('/addSinhVienToLopHocPhan', async (req, res) => {
     try {
         const { maLHP, maSinhViens } = req.body;
@@ -120,6 +121,29 @@ routerQuanLy.post('/addSinhVienToLopHocPhan', async (req, res) => {
             // Tạo document cho sinhvienlophp với mã sinh viên và mã lớp học phần
             const sinhVienLopHP = new SinhVienLopHPModel({ mssv: maSV, maLHP });
             await sinhVienLopHP.save();
+
+            // Tạo bảng điểm trống cho sinh viên
+            const lastDiemSo = await DiemSoModel.findOne().sort({ maDiem: -1 });
+            let newMaDiem = 'MD001';
+            if (lastDiemSo) {
+                const lastMaDiem = lastDiemSo.maDiem;
+                const numberPart = parseInt(lastMaDiem.substring(2)) + 1;
+                newMaDiem = 'MD' + numberPart.toString().padStart(3, '0');
+            }
+
+            const diemso = new DiemSoModel({
+                maDiem: newMaDiem,
+                MSSV: maSV,
+                lopHoc: lopHocPhan.tenLHP,
+                maMonHoc: lopHocPhan.maMonHoc,
+                monHoc: lopHocPhan.tenMonHoc,
+                diemTK1: null,
+                diemTK2: null,
+                diemTK3: null,
+                diemGK: null,
+                diemCK: null
+            });
+            await diemso.save();
         }
 
         // Thêm sinh viên hợp lệ vào danh sách sinh viên của lớp học phần
@@ -133,6 +157,7 @@ routerQuanLy.post('/addSinhVienToLopHocPhan', async (req, res) => {
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
 });
+
 
 routerQuanLy.post('/createLichHoc', async (req, res) => {
     try {
