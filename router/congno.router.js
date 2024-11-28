@@ -134,20 +134,21 @@ routerCongNo.post('/thanhToan/:MSSV/:nganh/:hocKy', async (req, res) => {
         // Cập nhật trạng thái công nợ thành "đã đóng" và tạo phiếu thu
         const updatedCongNoList = [];
         let totalSoTien = 0;
+        let hasUnpaidDebts = false;
 
         for (const congNo of congNoList) {
-            // Bỏ qua công nợ đã đóng
-            if (congNo.trangThai === 'Đã đóng') {
-                continue;
+            // Kiểm tra trạng thái công nợ
+            if (congNo.trangThai === 'Chưa đóng') {
+                hasUnpaidDebts = true;
+
+                // Cập nhật trạng thái công nợ
+                congNo.trangThai = 'Đã đóng';
+                const updatedCongNo = await congNo.save();
+                updatedCongNoList.push(updatedCongNo);
+
+                // Tính tổng số tiền
+                totalSoTien += congNo.soTien * congNo.tinChi;
             }
-
-            // Cập nhật trạng thái công nợ
-            congNo.trangThai = 'Đã đóng';
-            const updatedCongNo = await congNo.save();
-            updatedCongNoList.push(updatedCongNo);
-
-            // Tính tổng số tiền
-            totalSoTien += congNo.soTien * congNo.tinChi;
         }
 
         console.log('Total So Tien:', totalSoTien);
@@ -159,6 +160,13 @@ routerCongNo.post('/thanhToan/:MSSV/:nganh/:hocKy', async (req, res) => {
         }
 
         console.log('Final So Tien:', finalSoTien);
+
+        // Nếu không có công nợ nào ở trạng thái "Chưa đóng" thì không tạo ra phiếu thu
+        if (!hasUnpaidDebts) {
+            console.log('Không có công nợ nào ở trạng thái "Chưa đóng", không tạo phiếu thu.');
+            res.json({ updatedCongNoList, message: 'Không có công nợ nào ở trạng thái "Chưa đóng", không tạo phiếu thu.' });
+            return;
+        }
 
         // Tạo mã phiếu thu tự động
         const lastPhieuThu = await PhieuThuModel.findOne().sort({ maPhieuThu: -1 });
@@ -184,8 +192,14 @@ routerCongNo.post('/thanhToan/:MSSV/:nganh/:hocKy', async (req, res) => {
         console.log('Created PhieuThu:', savedPhieuThu);
 
         // Cập nhật lại khấu trừ của sinh viên
+        let remainingKhauTru = totalKhauTru - totalSoTien;
         for (const khauTru of khauTruList) {
-            khauTru.soTien = 0;
+            if (remainingKhauTru > 0) {
+                khauTru.soTien = remainingKhauTru;
+                remainingKhauTru = 0;
+            } else {
+                khauTru.soTien = 0;
+            }
             await khauTru.save();
         }
 
