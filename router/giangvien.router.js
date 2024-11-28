@@ -84,4 +84,49 @@ routerGiangVien.post('/danhGiaHocTap', async (req, res) => {
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
 });
+
+// API để tạo thông báo cho lớp học phần
+routerGiangVien.post('/thongBaoLopHP', async (req, res) => {
+    try {
+        const { tieuDeThongBao, noiDungThongBao, taoThongBao, maLHP } = req.body;
+        console.log('Body:', { tieuDeThongBao, noiDungThongBao, taoThongBao, maLHP });  // Kiểm tra giá trị tham số
+
+        // Kiểm tra các trường bắt buộc
+        if (!tieuDeThongBao || !noiDungThongBao || !taoThongBao || !maLHP) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        // Tìm lớp học phần dựa trên mã lớp học phần
+        const lopHocPhan = await LopHocPhanModel.findOne({ maLHP });
+        if (!lopHocPhan) {
+            console.log('LopHocPhan not found:', maLHP);
+            return res.status(404).json({ message: 'LopHocPhan not found' });
+        }
+
+        // Lấy danh sách sinh viên từ lớp học phần
+        const danhSachSinhVien = lopHocPhan.sinhVien;
+        console.log('Danh sách sinh viên:', danhSachSinhVien);
+
+        // Tạo thông báo cho từng sinh viên
+        const thongBaoList = [];
+        for (const mssv of danhSachSinhVien) {
+            const thongBao = new ThongBaoSV({
+                tieuDeThongBao,
+                noiDungThongBao,
+                doiTuongThongBao: mssv,
+                taoThongBao,
+                ngayGioThongBao: new Date() // Ngày giờ hiện tại
+            });
+            const savedThongBao = await thongBao.save();
+            thongBaoList.push(savedThongBao);
+        }
+
+        console.log('Created ThongBaoSV:', thongBaoList);
+        res.json(thongBaoList);
+    } catch (error) {
+        console.error('Error creating ThongBaoSV:', error);
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+});
+
 module.exports = routerGiangVien;
