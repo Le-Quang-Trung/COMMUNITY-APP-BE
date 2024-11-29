@@ -22,6 +22,7 @@ const thongtinlophoc = require('./router/thongtinlophoc.router');
 const giangvien = require('./router/giangvien.router');
 const quanly = require('./router/quanly.router');
 const congno = require('./router/congno.router');
+//const order = require('./router/order');
 
 app.use('/sinhvien/', routerSinhVien);
 app.use('/giangvien/', routerGiangVien);
@@ -35,6 +36,7 @@ app.use('/thongtinlophoc', thongtinlophoc);
 app.use('/giangvien', giangvien);
 app.use('/quanly', quanly);
 app.use('/congno', congno);
+//app.use('/order', order);
 
 app.get('/', (req, res) => {
     res.send("Hello World!");
