@@ -7,6 +7,7 @@ const SinhVienModel = require('../models/sinhvien.model');
 const SinhVienLopHPModel = require('../models/sinhvienlophp.model'); 
 const LichHocModel = require('../models/lichhoc.model');
 const DiemSoModel = require('../models/diemso.model');
+const MonHocModel = require('../models/monhoc.model');
 
 routerQuanLy.use(bodyParser.urlencoded({ extended: false }));
 routerQuanLy.use(bodyParser.json());
@@ -91,6 +92,13 @@ routerQuanLy.post('/addSinhVienToLopHocPhan', async (req, res) => {
             return res.status(404).json({ message: 'LopHocPhan not found' });
         }
 
+        // Tìm tên môn học dựa trên mã môn học
+        const monHoc = await MonHocModel.findOne({ maMonHoc: lopHocPhan.maMonHoc });
+        if (!monHoc) {
+            console.log('MonHoc not found for maMonHoc:', lopHocPhan.maMonHoc);
+            return res.status(404).json({ message: 'MonHoc not found' });
+        }
+
         // Danh sách sinh viên hợp lệ để thêm vào lớp học phần
         const validSinhViens = [];
 
@@ -136,7 +144,7 @@ routerQuanLy.post('/addSinhVienToLopHocPhan', async (req, res) => {
                 MSSV: maSV,
                 lopHoc: lopHocPhan.tenLHP,
                 maMonHoc: lopHocPhan.maMonHoc,
-                monHoc: lopHocPhan.tenMonHoc,
+                monHoc: monHoc.tenMonHoc, // Sử dụng tên môn học từ kết quả tìm kiếm
                 diemTK1: null,
                 diemTK2: null,
                 diemTK3: null,
@@ -157,7 +165,6 @@ routerQuanLy.post('/addSinhVienToLopHocPhan', async (req, res) => {
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
 });
-
 
 routerQuanLy.post('/createLichHoc', async (req, res) => {
     try {
