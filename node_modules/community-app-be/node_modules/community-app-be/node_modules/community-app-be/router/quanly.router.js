@@ -7,6 +7,8 @@ const SinhVienModel = require('../models/sinhvien.model');
 const SinhVienLopHPModel = require('../models/sinhvienlophp.model'); 
 const LichHocModel = require('../models/lichhoc.model');
 const DiemSoModel = require('../models/diemso.model');
+const MonHocModel = require('../models/monhoc.model');
+const GiangVienModel = require('../models/giangvien.model')
 
 routerQuanLy.use(bodyParser.urlencoded({ extended: false }));
 routerQuanLy.use(bodyParser.json());
@@ -43,6 +45,13 @@ routerQuanLy.post('/createLopHocPhan', async (req, res) => {
         // Chuyển đổi tên ngành thành mã ngành
         const maNganh = convertNganhToMaNganh(nganh);
         console.log('Converted Nganh:', maNganh);
+
+        // Kiểm tra giảng viên có tồn tại trong hệ thống không
+        const giangVien = await GiangVienModel.findOne({ maGV: GV });
+        if (!giangVien) {
+            console.log('GiangVien not found:', GV);
+            return res.status(404).json({ message: 'GiangVien not found' });
+        }
 
         // Tạo tên lớp học phần theo cú pháp DHKTPM16ATT
         const tenLHPGenerated = `DH${maNganh}${tenLop}`;
@@ -91,6 +100,13 @@ routerQuanLy.post('/addSinhVienToLopHocPhan', async (req, res) => {
             return res.status(404).json({ message: 'LopHocPhan not found' });
         }
 
+        // Tìm tên môn học dựa trên mã môn học
+        const monHoc = await MonHocModel.findOne({ maMonHoc: lopHocPhan.maMonHoc });
+        if (!monHoc) {
+            console.log('MonHoc not found for maMonHoc:', lopHocPhan.maMonHoc);
+            return res.status(404).json({ message: 'MonHoc not found' });
+        }
+
         // Danh sách sinh viên hợp lệ để thêm vào lớp học phần
         const validSinhViens = [];
 
@@ -136,7 +152,7 @@ routerQuanLy.post('/addSinhVienToLopHocPhan', async (req, res) => {
                 MSSV: maSV,
                 lopHoc: lopHocPhan.tenLHP,
                 maMonHoc: lopHocPhan.maMonHoc,
-                monHoc: lopHocPhan.tenMonHoc,
+                monHoc: monHoc.tenMonHoc, // Sử dụng tên môn học từ kết quả tìm kiếm
                 diemTK1: null,
                 diemTK2: null,
                 diemTK3: null,
@@ -163,6 +179,13 @@ routerQuanLy.post('/createLichHoc', async (req, res) => {
     try {
         const { maLHP, maMonHoc, lichHoc, ngayBatDau, ngayKetThuc, GV, phanLoai } = req.body;
         console.log('Body:', { maLHP, maMonHoc, lichHoc, ngayBatDau, ngayKetThuc, GV, phanLoai });  // Kiểm tra giá trị tham số
+
+        // Kiểm tra giảng viên có tồn tại trong hệ thống không
+        const giangVien = await GiangVienModel.findOne({ maGV: GV });
+        if (!giangVien) {
+            console.log('GiangVien not found:', GV);
+            return res.status(404).json({ message: 'GiangVien not found' });
+        }
 
         // Kiểm tra xem có lịch học nào trùng ngày, phòng, tiết học và nằm trong khoảng thời gian bắt đầu và kết thúc hay không
         for (const lich of lichHoc) {
