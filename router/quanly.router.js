@@ -4,7 +4,7 @@ const QuanLyModel = require('../models/quanly.model');
 const routerQuanLy = express.Router();
 const LopHocPhanModel = require('../models/lophocphan.model');
 const SinhVienModel = require('../models/sinhvien.model');
-const SinhVienLopHPModel = require('../models/sinhvienlophp.model'); 
+const SinhVienLopHPModel = require('../models/sinhvienlophp.model');
 const LichHocModel = require('../models/lichhoc.model');
 const DiemSoModel = require('../models/diemso.model');
 const MonHocModel = require('../models/monhoc.model');
@@ -18,7 +18,7 @@ routerQuanLy.get('/:maQL', async (req, res) => {
     try {
         const { maQL } = req.params;
         const quanly = await QuanLyModel.findOne({ maQL });
-        
+
         if (!quanly) {
             return res.status(404).json({ message: 'Not found quanly' });
         }
@@ -179,6 +179,27 @@ routerQuanLy.post('/createLichHoc', async (req, res) => {
         const { maLHP, maMonHoc, lichHoc, ngayBatDau, ngayKetThuc, GV, phanLoai } = req.body;
         console.log('Body:', { maLHP, maMonHoc, lichHoc, ngayBatDau, ngayKetThuc, GV, phanLoai });  // Kiểm tra giá trị tham số
 
+        // Chuyển đổi ngayBatDau và ngayKetThuc từ định dạng dd-MM-yyyy sang Date
+        let ngayBatDauDate = null;
+        if (ngayBatDau) {
+            const [day, month, year] = ngayBatDau.split('-');
+            if (day && month && year && !isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                ngayBatDauDate = new Date(`${year}-${month}-${day}`);
+            } else {
+                return res.status(400).json({ message: 'Ngày bắt đầu không hợp lệ. Vui lòng nhập theo định dạng dd-MM-yyyy' });
+            }
+        }
+
+        let ngayKetThucDate = null;
+        if (ngayKetThuc) {
+            const [day, month, year] = ngayKetThuc.split('-');
+            if (day && month && year && !isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                ngayKetThucDate = new Date(`${year}-${month}-${day}`);
+            } else {
+                return res.status(400).json({ message: 'Ngày kết thúc không hợp lệ. Vui lòng nhập theo định dạng dd-MM-yyyy' });
+            }
+        }
+
         // Kiểm tra giảng viên có tồn tại trong hệ thống không
         const giangVien = await GiangVienModel.findOne({ maGV: GV });
         if (!giangVien) {
@@ -193,8 +214,8 @@ routerQuanLy.post('/createLichHoc', async (req, res) => {
                 'lichHoc.ngayHoc': ngayHoc,
                 'lichHoc.tietHoc': tietHoc,
                 'lichHoc.phongHoc': phongHoc,
-                ngayBatDau: { $lte: new Date(ngayKetThuc) },
-                ngayKetThuc: { $gte: new Date(ngayBatDau) }
+                ngayBatDau: { $lte: ngayKetThucDate },
+                ngayKetThuc: { $gte: ngayBatDauDate }
             });
             if (existingLichHoc) {
                 console.log('Lịch học bị trùng:', { ngayHoc, tietHoc, phongHoc });
@@ -217,8 +238,8 @@ routerQuanLy.post('/createLichHoc', async (req, res) => {
             maLHP,
             maMonHoc,
             lichHoc,
-            ngayBatDau,
-            ngayKetThuc,
+            ngayBatDau: ngayBatDauDate,
+            ngayKetThuc: ngayKetThucDate,
             GV,
             phanLoai
         });
@@ -243,5 +264,6 @@ routerQuanLy.post('/createLichHoc', async (req, res) => {
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
 });
+
 
 module.exports = routerQuanLy;
